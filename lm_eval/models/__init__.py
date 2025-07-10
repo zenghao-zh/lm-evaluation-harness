@@ -6,6 +6,7 @@ from . import (
     hf_audiolm,
     hf_steered,
     hf_vlms,
+    hf_moe,
     huggingface,
     ibm_watsonx_ai,
     mamba_lm,
