@@ -46,13 +46,15 @@ class MoEGate(nn.Module):
         ### compute gating score
         hidden_states = hidden_states.view(-1, h)
         logits = torch.nn.functional.linear(hidden_states, self.weight, None)
+        topk_weight, topk_idx = torch.topk(logits, k=self.top_k, dim=-1, sorted=False)
         if self.scoring_func == 'softmax':
-            scores = logits.softmax(dim=-1)
+            # scores = logits.softmax(dim=-1)
+            topk_weight = topk_weight.softmax(dim=-1)
         else:
             raise NotImplementedError(f'insupportable scoring function for MoE gating: {self.scoring_func}')
         
         ### select top-k experts
-        topk_weight, topk_idx = torch.topk(scores, k=self.top_k, dim=-1, sorted=False)
+        # topk_weight, topk_idx = torch.topk(scores, k=self.top_k, dim=-1, sorted=False)
         
         ### norm gate to sum 1
         if self.top_k > 1 and self.norm_topk_prob:
